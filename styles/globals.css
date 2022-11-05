@@ -17,6 +17,18 @@ a {
   box-sizing: border-box;
 }
 
+.orange {
+  background-color: #876908;
+}
+
+.blue {
+  background-color: #084e87;
+}
+
+.purple {
+  background-color: #7a0887;
+}
+
 .graph {
   background-image: 
   radial-gradient(rgb(25, 25, 25) 10%, transparent 10%),

@@ -1,7 +1,6 @@
 import Graph from "react-graph-vis";
 import React, { useState, useEffect } from "react";
-import processed from './processed'
-
+import processed from "./processed";
 
 export default function App() {
   const [load, setLoad] = useState(false);
@@ -98,9 +97,10 @@ export default function App() {
     setLoad(true);
   }, []);
 
-  console.log(processed)
+  console.log(processed);
 
-  const { graph, events } = final ? final : state;
+  const { graph, events, links, mesh, connected } = final ? final : state;
+  console.log(links);
 
   return (
     <div
@@ -111,29 +111,111 @@ export default function App() {
         padding: "2em 5em 2em 15em",
       }}
     >
-      <div className="paper">
-        <h1>Paper name</h1>
-        <p>Paper descrption</p>
-      </div>
-
-      <div className="stats" style={{ display: 'flex', flexDirection: 'column', gap: '3em'}}>
-        <div className="graphcontainer" style={{ width: "30vw" }}>
+      <div className="stats" style={{ display: "flex", gap: "7em" }}>
+        <div className="graphcontainer" style={{ width: "40vw" }}>
+          <h2>Sensory neurons in the Drosophila genital tract regulate female reproductive behavior</h2>
+          <p style={{
+            lineHeight: "1.5em",
+            fontSize: "1.2em",
+          }}>
+            Females of many animal species behave very differently before and
+            after mating. In <span className="orange">Drosophila melanogaster</span>, changes in female behavior
+            upon mating are triggered by the sex peptide (SP), a small peptide
+            present in the male's seminal fluid. SP activates a specific
+            receptor, the <span className="purple">sex peptide receptor (SPR)</span>, which is broadly expressed
+            in the female reproductive tract and nervous system. Here, we
+            pinpoint the action of SPR to a small subset of internal sensory
+            receptor, the <span className="orange">sex peptide receptor (SPR)</span>, which is broadly expressed
+            neurons that innervate the female uterus and oviduct. These neurons
+            express both fruitless (fru), a marker for neurons likely to have
+            sex-specific functions, and pickpocket (ppk), <span className="orange">a marker for
+            proprioceptive neurons</span>. We show that SPR expression in these fru+
+            ppk+ neurons is both necessary and sufficient for behavioral changes
+            induced by mating. These <span className="blue">neurons project to regions of the central
+            nervous system</span> that have been implicated in the control of
+            reproductive behaviors in Drosophila and other insects.
+          </p>
+          <br/>
           <h2>Knowledge Graph</h2>
           {load && final && (
             <div className="graph">
-            <Graph
-              graph={graph}
-              options={options}
-              events={events}
-              key={Math.random()}
-              style={{ height: "45vh" }}
-            />
+              <Graph
+                graph={graph}
+                options={options}
+                events={events}
+                key={Math.random()}
+                style={{ height: "30vh" }}
+              />
             </div>
           )}
         </div>
         <div className="backlinks" style={{ width: "20vw" }}>
           <h2>Backlinks</h2>
-          <p>analysis goes here</p>
+          <div>
+            {connected?.slice(1, 10).map((item, index) => {
+              return (
+                <div key={index}>
+                  <p
+                    style={{
+                      padding: "5px 10px",
+                      margin: "5px 3px",
+                      backgroundColor: "rgb(60, 60, 60)",
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <br />
+          <h2>Tags</h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+            }}
+          >
+            {links?.map((item, index) => {
+              return (
+                <div key={index}>
+                  <p
+                    style={{
+                      padding: "5px 10px",
+                      margin: "3px",
+                      backgroundColor: "rgb(60, 60, 60)",
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <br />
+          <h2>Mesh Data</h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+            }}
+          >
+            {mesh?.map((item, index) => {
+              return (
+                <div key={index}>
+                  <p
+                    style={{
+                      padding: "5px 10px",
+                      margin: "3px",
+                      backgroundColor: "rgb(60, 60, 60)",
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

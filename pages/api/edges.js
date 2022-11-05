@@ -6,7 +6,6 @@ export default function handler(req, res) {
   function nodeData() {
     let nodes = [];
     let array = [];
-    let those = processedNodes;
 
     for (let i = 0; i < processed["to"].length; i++) {
       nodes.push(processed["to"][i]["to"]);
@@ -27,26 +26,31 @@ export default function handler(req, res) {
       } else if (type === ":Category") {
         return "lightpurple";
       } else if (type === ":Mesh") {
-        return "lightgreen";
+        return "rgb(247, 195, 195)";
       }
     }
 
     for (let i = 0; i < uniqueArray.length; i++) {
-      array.push({
-        id: uniqueArray[i],
-        label: `${
-          findIt(uniqueArray[i])[0]?.title
-            ? findIt(uniqueArray[i])[0]?.title.split(" ").slice(0, 4).join(" ")
-            : uniqueArray[i]
-        }`,
-        type: `${
-          findIt(uniqueArray[i])[0]?.labels
-            ? findIt(uniqueArray[i])[0]?.labels
-            : "Paper"
-        }`,
-        size: findIt(uniqueArray[i])[0]?.labels === ":Paper" ? 20 : 5,
-        color: getColor(findIt(uniqueArray[i])[0]?.labels),
-      });
+      if (findIt(uniqueArray[i])[0]?.labels === ":Paper") {
+        array.push({
+          id: uniqueArray[i],
+          label: `${
+            findIt(uniqueArray[i])[0]?.title
+              ? findIt(uniqueArray[i])[0]
+                  ?.title.split(" ")
+                  .slice(0, 4)
+                  .join(" ")
+              : uniqueArray[i]
+          }`,
+          type: `${
+            findIt(uniqueArray[i])[0]?.labels
+              ? findIt(uniqueArray[i])[0]?.labels
+              : "Paper"
+          }`,
+          size: findIt(uniqueArray[i])[0]?.labels === ":Paper" ? 20 : 5,
+          color: getColor(findIt(uniqueArray[i])[0]?.labels),
+        });
+      }
     }
 
     return array;
@@ -58,18 +62,18 @@ export default function handler(req, res) {
 
     function getColor(text) {
       if (text === "IN_CATEGORY") {
-        return "rgba(255, 100, 100, 0.8)";
+        return "purple";
       } else if (text === "HAS_MeSH") {
-        return "rgba(100, 255, 100, 0.8)";
+        return "rgb(247, 195, 195)";
       } else if (text === "REFERENCES") {
-        return "rgba(100, 100, 255, 0.8)";
+        return "lightblue";
       }
     }
 
     for (let i = 0; i < edges.length; i++) {
       array.push({
-        from: edges[i]["from"],
-        to: edges[i]["to"],
+        to: edges[i]["from"],
+        from: edges[i]["to"],
         color: getColor(edges[i]["type"]),
         width: 1.5,
       });
@@ -78,19 +82,138 @@ export default function handler(req, res) {
     return array;
   }
 
-  res
-    .status(200)
-    .json({
-      data: {
-        graph: { 
-          nodes: nodeData(), 
-          edges: edgeData(), 
-          events: { function (event) {
-              alert(event);
-            }
-          } },
-      },
+  function connected() {
+    let nodes = [];
+    let array = [];
+
+    for (let i = 0; i < processed["to"].length; i++) {
+      nodes.push(processed["to"][i]["to"]);
+      nodes.push(processed["to"][i]["from"]);
+    }
+
+    const uniqueArray = nodes.filter(function (item, pos) {
+      return nodes.indexOf(item) == pos;
     });
+
+    function findIt(item) {
+      return processedNodes["to"].filter((x) => x.id === item);
+    }
+
+    for (let i = 0; i < uniqueArray.length; i++) {
+      if (findIt(uniqueArray[i])[0]?.labels === ":Paper") {
+        array.push({
+          id: uniqueArray[i],
+          label: `${
+            findIt(uniqueArray[i])[0]?.title
+              ? findIt(uniqueArray[i])[0]
+                  ?.title
+              : uniqueArray[i]
+          }`,
+          type: `${
+            findIt(uniqueArray[i])[0]?.labels
+              ? findIt(uniqueArray[i])[0]?.labels
+              : "Paper"
+          }`,
+        });
+      }
+    }
+
+    return array;
+  }
+
+  function backlink() {
+    let nodes = [];
+    let array = [];
+
+    for (let i = 0; i < processed["to"].length; i++) {
+      nodes.push(processed["to"][i]["to"]);
+      nodes.push(processed["to"][i]["from"]);
+    }
+
+    const uniqueArray = nodes.filter(function (item, pos) {
+      return nodes.indexOf(item) == pos;
+    });
+
+    function findIt(item) {
+      return processedNodes["to"].filter((x) => x.id === item);
+    }
+
+    for (let i = 0; i < uniqueArray.length; i++) {
+      if (findIt(uniqueArray[i])[0]?.labels === ":Category") {
+        array.push({
+          id: uniqueArray[i],
+          label: `${
+            findIt(uniqueArray[i])[0]?.title
+              ? findIt(uniqueArray[i])[0]
+                  ?.title.split(" ")
+                  .slice(0, 4)
+                  .join(" ")
+              : uniqueArray[i]
+          }`,
+          type: `${
+            findIt(uniqueArray[i])[0]?.labels
+              ? findIt(uniqueArray[i])[0]?.labels
+              : "Paper"
+          }`,
+        });
+      }
+    }
+
+    return array;
+  }
+
+  function mesh() {
+    let nodes = [];
+    let array = [];
+
+    for (let i = 0; i < processed["to"].length; i++) {
+      nodes.push(processed["to"][i]["to"]);
+      nodes.push(processed["to"][i]["from"]);
+    }
+
+    const uniqueArray = nodes.filter(function (item, pos) {
+      return nodes.indexOf(item) == pos;
+    });
+
+    function findIt(item) {
+      return processedNodes["to"].filter((x) => x.id === item);
+    }
+
+    for (let i = 0; i < uniqueArray.length; i++) {
+      if (findIt(uniqueArray[i])[0]?.labels === ":Mesh") {
+        array.push({
+          id: uniqueArray[i],
+          label: `${
+            findIt(uniqueArray[i])[0]?.title
+              ? findIt(uniqueArray[i])[0]
+                  ?.title.split(" ")
+                  .slice(0, 4)
+                  .join(" ")
+              : uniqueArray[i]
+          }`,
+          type: `${
+            findIt(uniqueArray[i])[0]?.labels
+              ? findIt(uniqueArray[i])[0]?.labels
+              : "Paper"
+          }`,
+        });
+      }
+    }
+
+    return array;
+  }
+
+  res.status(200).json({
+    data: {
+      graph: {
+        nodes: nodeData(),
+        edges: edgeData(),
+      },
+      links: backlink(),
+      mesh: mesh(),
+      connected: connected(),
+    },
+  });
 }
 
 const processed = {
